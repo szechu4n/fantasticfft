@@ -21,160 +21,70 @@ module fantasticfft_fft8 #(
     output logic [INPUT_SIZE - 1 : 0] y4,
     output logic [INPUT_SIZE - 1 : 0] y5,
     output logic [INPUT_SIZE - 1 : 0] y6,
-    output logic [INPUT_SIZE - 1 : 0] y7
+    output logic [INPUT_SIZE - 1 : 0] y7,
+
+    output logic [INPUT_SIZE - 1 : 0] y0_i,
+    output logic [INPUT_SIZE - 1 : 0] y1_i,
+    output logic [INPUT_SIZE - 1 : 0] y2_i,
+    output logic [INPUT_SIZE - 1 : 0] y3_i,
+    output logic [INPUT_SIZE - 1 : 0] y4_i,
+    output logic [INPUT_SIZE - 1 : 0] y5_i,
+    output logic [INPUT_SIZE - 1 : 0] y6_i,
+    output logic [INPUT_SIZE - 1 : 0] y7_i
 );
 
-///////////////////////////////////////////////////
-// Layer 0
-///////////////////////////////////////////////////
+always_ff @( posedge clk ) begin : fft8
 
-logic [INPUT_SIZE - 1 : 0] t0, t1, t2, t3, t4, t5, t6, t7;
-logic [INPUT_SIZE - 1 : 0] m0, m1, m2, m3, m4, m5, m6, m7;
-logic [INPUT_SIZE - 1 : 0] d0, d1, d2, d3, d4, d5, d6, d7, d8, d9;
-logic [INPUT_SIZE - 1 : 0] cm0, cm1;
+    // x1 - x5
+    // x1 + x5
 
-localparam CONSTANT = 0.707;
+/*
+    y0   = sum(x); //a+b+c+d+e+f+g+h;
+    y0_i = 0;
+    
+    y1   = (x(1) - x(5)) + 0.707 * (x(2) - x(6) + x(8) - x(4)); // (a-e)+p*(b-f+h-d); -- matches line y7
+    y1_i = x(7) - x(3) + 0.707 * (x(8) - x(4) - x(2) + x(6));   // (g-c)+p*(h-d-b+f);
+    
+    y2   = x(1) + x(5) - x(7) - x(3); // a+e-g-c; -- matches line y6
+    y2_i = x(4) + x(8) - x(2) - x(6); // d+h-b-f;
+    
+    y3   = (x(1) - x(5)) + 0.707 * (x(6) - x(2) + x(4) - x(8)); // (a-e)+p*(f-b+d-h); -- matches line y5
+    y3_i = (x(3) - x(7)) + 0.707 * (x(8) + x(6) - x(2) - x(4)); // (c-g)+p*(h+f-b-d);
+    
+    y4   = x(1) + x(5) + x(3) + x(7) - x(2) - x(6) - x(4) - x(8); //a+e+c+g-b-f-d-h;
+    y4_i = 0;
+    
+    y5   = (x(1) - x(5)) + 0.707 * (x(6) - x(2) + x(4) - x(8)); // (a-e)+p*(f-b-h+d);
+    y5_i = (x(7) - x(3)) + 0.707 * (x(2) + x(4) - x(8) - x(6)); // (g-c)+p*(b+d-h-f);
+    
+    y6   = x(1) + x(5) - x(7) - x(3); // a+e-g-c;
+    y6_i = x(2) + x(6) - x(4) - x(8); // b+f-d-h;
+    
+    y7   = (x(1) - x(5)) + 0.707 * (x(2) - x(6) + x(8) - x(4)); // (a-e)+p*(b+h-f-d);
+    y7_i = (x(3) - x(7)) + 0.707 * (x(2) + x(4) - x(8) - x(6)); // (c-g)+p*(b+d-h-f);
 
-butterfly1 layer0_bf1_0_4(
-    .x0(x0),
-    .x1(x4),
-    .y0(t0),
-    .y1(t1)
-);
-
-butterfly1 layer0_bf1_2_6(
-    .x0(x2),
-    .x1(x6),
-    .y0(t2),
-    .y1(t3)
-);
-
-butterfly1 layer0_bf1_1_5(
-    .x0(x1),
-    .x1(x5),
-    .y0(t4),
-    .y1(t5)
-);
-
-butterfly1 layer0_bf1_3_7(
-    .x0(x3),
-    .x1(x7),
-    .y0(t6),
-    .y1(t7)
-);
-
-
-// Layer 1
-butterfly1 layer1_bf1_0_2(
-    .x0 (t0),
-    .x1 (t2),
-    .y0 (m0),
-    .y1 (m1)
-);
-
-butterfly2 layer1_bf2_1_3(
-    .x0    (t1),
-    .x1    (t3),
-    .r     (m2),
-    .i     (),
-    .i_neg ()
-);
-
-butterfly1 layer1_bf1_4_6(
-    .x0 (t4),
-    .x1 (t6),
-    .y0 (m3),
-    .y1 (m4)
-);
-
-butterfly2 layer1_bf2_5_7(
-    .x0    (t5),
-    .x1    (t7),
-    .r     (m5),
-    .i     (m6),
-    .i_neg (m7)
-);
-
-// Delay layer
-
-always_ff @( posedge clk ) begin : delay_and_multipliers
-    d0 <= m0;
-    d1 <= m1;
-
-    d2 <= m2;
-    d3 <= m2;
-
-    d4 <= m3;
-    d5 <= m4;
-
-    d6 <= m5 + m6;
-    d7 <= m5 + m7; // whats the right sign here?
+*/
 end
-
-always_comb begin : constant_multiplier
-    cm0 = d6 * CONSTANT;
-    cm1 = d7 * CONSTANT;
-end
-
-// Final Layer
-
-butterfly1 layer2_bf1_0_4(
-    .x0 (d0),
-    .x1 (d4),
-    .y0 (y0),
-    .y1 (y4)
-);
-
-butterfly1 layer2_bf1_2_6(
-    .x0 (d2),
-    .x1 (cm0),
-    .y0 (y1),
-    .y1 (y5)
-);
-
-butterfly2 layer2_bf2_5_7(
-    .x0    (d1),
-    .x1    (d5),
-    .r     (y2),
-    .i     (y6),
-    .i_neg ()
-);
-
-butterfly1 layer2_bf1_1_5(
-    .x0 (d3),
-    .x1 (cm1),
-    .y0 (y3),
-    .y1 (y7)
-);
     
 endmodule
 
-module butterfly1 #(
-    parameter INPUT_SIZE = 8,
-    parameter K = 0,
-    parameter N = 8
-)(
-    input  signed [INPUT_SIZE - 1 : 0] x0,
-    input  signed [INPUT_SIZE - 1 : 0] x1,
 
-    output signed [INPUT_SIZE - 1 : 0] y0,
-    output signed [INPUT_SIZE - 1 : 0] y1
-    
+module sum_diff_adder #(
+    parameter INPUT_SIZE = 8
+) (
+    input logic [INPUT_SIZE - 1 : 0] a,
+    input logic [INPUT_SIZE - 1 : 0] b,
+
+    output logic [INPUT_SIZE - 1 : 0] c,
+    output logic [INPUT_SIZE - 1 : 0] c_neg
 );
-    
-endmodule
 
-module butterfly2 #(
-    parameter INPUT_SIZE = 8,
-    parameter K = 0,
-    parameter N = 8
-)(
-    input  signed [INPUT_SIZE - 1 : 0] x0,
-    input  signed [INPUT_SIZE - 1 : 0] x1,
+logic [INPUT_SIZE - 1 : 0] temp;
 
-    output signed [INPUT_SIZE - 1 : 0] r,
-    output signed [INPUT_SIZE - 1 : 0] i,
-    output signed [INPUT_SIZE - 1 : 0] i_neg
-);
+always_comb begin : adder
+    temp  = a + b;
+    c     <= temp;
+    c_neg <= ~temp + 1;
+end
     
 endmodule
