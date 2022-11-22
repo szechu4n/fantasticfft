@@ -30,21 +30,21 @@ end
 always @(posedge clk) begin
 	case(state)
 		RESET: begin
-      in_out_tri = 0;
+			in_out_tri = 0;
 			for(int i=0; i<data_depth;i++) begin
 				memory[i] = {data_width'('h0)};
 			end
 		end
 		READ: begin
-      data_buffer = memory[address];
-      bus_clr = 0;
-      in_out_tri = 1;
-    end
+			data_buffer = memory[address];
+			bus_clr = 0;
+			in_out_tri = 1;
+		end
 		WRITE: begin
-       memory[address] = data_bus; //Last value on bus before read_write goes low gets stored
-       bus_clr = 1; //Writing module should not drive bus until bus_clr is received
-       in_out_tri = 0;
-     end
+			memory[address] = data_bus; //Last value on bus before read_write goes low gets stored
+			bus_clr = 1; //Writing module should not drive bus until bus_clr is received
+			in_out_tri = 0;
+		end
 	endcase;
 end
 
