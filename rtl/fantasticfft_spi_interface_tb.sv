@@ -1,6 +1,6 @@
 module spi_interface_tb(
 input logic send_complete, clk, 
-output logic s_clk, slave_sel, new_byte, reset, master_out,
+output logic s_clk, slave_sel, reset, master_out,
 output logic [7:0] mcu_out);
 
 logic last_send = 0;
@@ -8,7 +8,7 @@ logic [7:0] master_data = 8'h72;
 logic [7:0] controller_data = 8'h66;
 logic [2:0] counter;
 
-assign master_out = test_data[counter];
+assign master_out = master_data[counter];
 assign mcu_out = controller_data;
 
 initial begin
@@ -65,8 +65,7 @@ initial begin
 	#80 // 2 s_clock cycles
 	
 	//Reset Interrupt Test
-	
-	$finish
+	$finish;
 end
 
 
@@ -75,12 +74,10 @@ always @(send_complete) begin
 
 	if(~send_complete && last_send) begin //falling edge of send_complete
 		#10 //Simulating clock cycle
-		new_byte = 0; 
 		last_send = 0;
 	end
 	else if (send_complete && ~last_send) begin //falling edge of send_complete
 		#10 //Simulating clock cycle
-		new_byte = 1;
 		last_send = 1;
 		controller_data = controller_data + 1'd1;
 		master_data = master_data + + 1'd1;
@@ -89,6 +86,3 @@ always @(send_complete) begin
 	
 	
 end
-
-
-endmodule

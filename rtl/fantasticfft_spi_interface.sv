@@ -1,5 +1,5 @@
 module spi_interface(
-input logic clk, s_clk, mosi, slave_sel, new_byte, reset,
+input logic clk, s_clk, mosi, slave_sel, reset,
 input logic [7:0] data_in,
 output logic miso, send_complete,
 output logic [7:0] data_out);
@@ -18,9 +18,11 @@ always @(slave_sel, s_clk, reset)begin
 		bit_counter = 3'd7;
 		in_buf = 8'h00;
 		last_sel = 1;
+		send_complete = 0;
 	end
 	
 	else if(slave_sel == 0)begin
+		send_complete = 0;
 		miso_tri = 1;
 		if(last_sel) begin //negedge of slave select
 			in_buf = data_in; //negedge of slave_sel, loading in first byte 
@@ -33,25 +35,17 @@ always @(slave_sel, s_clk, reset)begin
 					bit_counter = 3'd7; //reset counter
 					in_buf = data_in; //loading in subsequent byte for multiple byte transmission
 					data_out = mosi_buf;
+					send_complete = 1;
 				end
 				else bit_counter = bit_counter - 1'd1;//decrement bit to be read in/out
 			end
-		end	
+		end
 	end
 	 
 	else begin //Not selected/reset
 		miso_tri = 0;
 		bit_counter = 3'd7;
 		last_sel = 1;
-	end
-end
-
-
-
-always @(clk, reset) begin 
-	if(reset) send_complete = 0;
-	else if(bit_counter == 4'h0) begin
-		if(!new_byte) send_complete = 1; //Signaling control module to increment outgoing buffer and read in value from data_out
-		else send_complete = 0; //new_byte works to reset send_complete flag, control unit should use falling edge of send_complete to reset new_byte and falling edge og send_complete to reset new_byte
+		send_complete = 0;
 	end
 end
