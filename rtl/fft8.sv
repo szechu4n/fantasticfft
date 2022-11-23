@@ -1,3 +1,8 @@
+
+// creates variable-length constant with provided integer and fractional components
+`define CREATE_CONSTANT_FIXED_POINT(INT_SZ, FRAC_SZ, INT_CONST, FRAC_CONST) \
+{ INT_SZ'(INT_CONST), FRAC_CONST, {(FRAC_SZ - $bits(FRAC_CONST)){ 0 }}}
+
 module fantasticfft_fft8 # (
     // Determines size of integer component of fixed point
     parameter INT_SIZE   = 8,
@@ -40,10 +45,6 @@ module fantasticfft_fft8 # (
     // output logic [INT_SIZE - 1 : -FRAC_SIZE] y6_i,
     // output logic [INT_SIZE - 1 : -FRAC_SIZE] y7_i
 );
-
-// creates variable-length constant with provided integer and fractional components
-`define CREATE_CONSTANT_FIXED_POINT(INT_SZ, FRAC_SZ, INT_CONST, FRAC_CONST) \
-{ INT_SZ'(INT_CONST), FRAC_CONST, {(FRAC_SZ - $bits(FRAC_CONST)){ 0 }}}
 
 // implements a butterfly subadder
 task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, output logic [INT_SIZE - 1 : -FRAC_SIZE] c, d);
