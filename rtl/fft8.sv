@@ -5,37 +5,40 @@ module fantasticfft_fft8 # (
     // Determines size of fractional component of fixed point
     parameter FRAC_SIZE  = 8
 )(
-    input  logic clk,
+    fantasticfft_fft8_if fft8if
+    // input  logic clk,
+    // input  logic isValid,
+    // output logic resultValid, 
 
-    // 8 point FFT inputs
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x0,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x1,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x2,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x3,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x4,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x5,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x6,
-    input logic [INT_SIZE - 1 : -FRAC_SIZE] x7,
+    // // 8 point FFT inputs
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x0,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x1,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x2,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x3,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x4,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x5,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x6,
+    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x7,
 
-    // 8 point FFT real outputs
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y0,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y1,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y2,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y3,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y4,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y5,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y6,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y7,
+    // // 8 point FFT real outputs
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y0,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y1,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y2,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y3,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y4,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y5,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y6,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y7,
 
-    // 8 point FFT imaginary outputs
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y0_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y1_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y2_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y3_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y4_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y5_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y6_i,
-    output logic [INT_SIZE - 1 : -FRAC_SIZE] y7_i
+    // // 8 point FFT imaginary outputs
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y0_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y1_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y2_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y3_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y4_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y5_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y6_i,
+    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y7_i
 );
 
 // creates variable-length constant with provided integer and fractional components
@@ -72,8 +75,9 @@ endfunction
 logic [INT_SIZE - 1 : -FRAC_SIZE] t0, t1, t2, t3, t4, t5, t6, t7;
 logic [INT_SIZE - 1 : -FRAC_SIZE] c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11;
 logic [INT_SIZE - 1 : -FRAC_SIZE] d0, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12;
+logic isValid_stage1, isValid_stage2, isValid_stage3;
 
-always_ff @( posedge clk ) begin : fft8
+always_ff @( posedge fft8if.clk ) begin : fft8
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition
 
@@ -97,10 +101,11 @@ always_ff @( posedge clk ) begin : fft8
     */
 
     // Layer 1 - From x to t
-    SubAdder(x0, x4, t0, t1);
-    SubAdder(x2, x6, t2, t3);
-    SubAdder(x3, x7, t4, t5);
-    SubAdder(x1, x5, t6, t7);
+    SubAdder(fft8if.x0, fft8if.x4, t0, t1);
+    SubAdder(fft8if.x2, fft8if.x6, t2, t3);
+    SubAdder(fft8if.x3, fft8if.x7, t4, t5);
+    SubAdder(fft8if.x1, fft8if.x5, t6, t7);
+    isValid_stage1 <= fft8if.isValid;
 
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition at Layer 2
@@ -133,6 +138,7 @@ always_ff @( posedge clk ) begin : fft8
     SubAdder(Negate(t7), t5, c8, c9);
     c10 <= Negate(t5) - t6;
     c11 <= t1;
+    isValid_stage2 <= isValid_stage1;
 
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition at Layer 3
@@ -169,6 +175,7 @@ always_ff @( posedge clk ) begin : fft8
     d10 <= c6;
     d11 <= c7;
     d12 <= c3;
+    isValid_stage3 <= isValid_stage2;
 
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition at Output Layer
@@ -193,23 +200,24 @@ always_ff @( posedge clk ) begin : fft8
     */
 
     // Output Layer - from d to y
-    y0 <= (d0); 
-    y1 <= (d7) + d2; 
-    y2 <= (d8);
-    y3 <= (d7) + d3; 
-    y4 <= (d1); 
-    y5 <= (d7) + d3; 
-    y6 <= (d8); 
-    y7 <= (d7) + d2; 
+    fft8if.y0 <= (d0); 
+    fft8if.y1 <= (d7) + d2; 
+    fft8if.y2 <= (d8);
+    fft8if.y3 <= (d7) + d3; 
+    fft8if.y4 <= (d1); 
+    fft8if.y5 <= (d7) + d3; 
+    fft8if.y6 <= (d8); 
+    fft8if.y7 <= (d7) + d2; 
 
-    y0_i <= 0;
-    y1_i <= (d10) + d4;
-    y2_i <= (d9); 
-    y3_i <= (d11) + d5; 
-    y4_i <= 0;
-    y5_i <= (d10) + d6; 
-    y6_i <= (d12);
-    y7_i <= (d11) + d6;
+    fft8if.y0_i <= 0;
+    fft8if.y1_i <= (d10) + d4;
+    fft8if.y2_i <= (d9); 
+    fft8if.y3_i <= (d11) + d5; 
+    fft8if.y4_i <= 0;
+    fft8if.y5_i <= (d10) + d6; 
+    fft8if.y6_i <= (d12);
+    fft8if.y7_i <= (d11) + d6;
+    fft8if.resultValid <= isValid_stage3;
 
     // -----------------------------------------------------------------//
 
