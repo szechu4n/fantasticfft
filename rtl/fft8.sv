@@ -1,7 +1,5 @@
 
-// creates variable-length constant with provided integer and fractional components
-`define CREATE_CONSTANT_FIXED_POINT(INT_SZ, FRAC_SZ, INT_CONST, FRAC_CONST) \
-{ INT_SZ'(INT_CONST), FRAC_CONST, {(FRAC_SZ - $bits(FRAC_CONST)){ 0 }}}
+`include "rtl/fixedpoint.sv"
 
 module fantasticfft_fft8 # (
     // Determines size of integer component of fixed point
@@ -11,39 +9,6 @@ module fantasticfft_fft8 # (
     parameter FRAC_SIZE  = 8
 )(
     fantasticfft_fft8_if fft8if
-    // input  logic clk,
-    // input  logic isValid,
-    // output logic resultValid, 
-
-    // // 8 point FFT inputs
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x0,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x1,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x2,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x3,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x4,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x5,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x6,
-    // input logic [INT_SIZE - 1 : -FRAC_SIZE] x7,
-
-    // // 8 point FFT real outputs
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y0,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y1,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y2,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y3,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y4,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y5,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y6,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y7,
-
-    // // 8 point FFT imaginary outputs
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y0_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y1_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y2_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y3_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y4_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y5_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y6_i,
-    // output logic [INT_SIZE - 1 : -FRAC_SIZE] y7_i
 );
 
 // implements a butterfly subadder
