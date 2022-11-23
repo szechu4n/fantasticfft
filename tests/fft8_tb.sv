@@ -31,14 +31,14 @@ module fantastic_fft8_tb (
         $display("-----------------------------------------------------------------");
         $display("Beginning test...");
         
-        x0 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 1, 0);
-        x1 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 2, 0);
-        x2 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 3, 0);
-        x3 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 4, 0);
-        x4 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 5, 0);
-        x5 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 6, 0);
-        x6 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 7, 0);
-        x7 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8, 0);
+        x0 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd1, 8'd0);
+        x1 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd2, 8'd0);
+        x2 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd3, 8'd0);
+        x3 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd4, 8'd0);
+        x4 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd5, 8'd0);
+        x5 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd6, 8'd0);
+        x6 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd7, 8'd0);
+        x7 = `CREATE_CONSTANT_FIXED_POINT(8, 8, 8'd8, 8'd0);
         $display("\tCreated constants (values 1-8)...");
 
         y0 = (x0 + x4) + (x2 + x6) + (x1 + x5) + (x3 + x7); 
@@ -71,7 +71,7 @@ module fantastic_fft8_tb (
         fft8if.isValid <= 1;
         $display("\tAssigned constant values to FFT8 inputs...");
 
-        @(posedge multif.clk);
+        @(posedge fft8if.clk);
         #1step;
 
         $display("\tValues should now be clocked into FFT8, clearing values and awaiting results...");
@@ -87,27 +87,35 @@ module fantastic_fft8_tb (
         fft8if.isValid <= 0;
 
         repeat(3) begin
-            @(posedge multif.clk);
+            @(posedge fft8if.clk);
             #1step;
         end
 
         
         $display("\ty0 + y0_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y0), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y0_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y0), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y0_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y0), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y0_i));
         $display("\ty1 + y1_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y1), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y1_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y1), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y1_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y1), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y1_i));
         $display("\ty2 + y2_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y2), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y2_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y2), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y2_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y2), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y2_i));
         $display("\ty3 + y3_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y3), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y3_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y3), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y3_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y3), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y3_i));
         $display("\ty4 + y4_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y4), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y4_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y4), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y4_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y4), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y4_i));
         $display("\ty5 + y5_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y5), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y5_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y5), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y5_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y5), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y5_i));
         $display("\ty6 + y6_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y6), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y6_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y6), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y6_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y6), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y6_i));
         $display("\ty7 + y7_i\tExpected: %d.%d + j * %d.%d\tCalculated: %d.%d + j * %d.%d", 
-            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y7), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y7_i));
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y7), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, y7_i),
+            `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y7), `GET_FIXED_POINT_DECIMAL_FORM(8, 8, fft8if.y7_i));
 
         $finish();
     end
