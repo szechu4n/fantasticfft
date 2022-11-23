@@ -12,17 +12,15 @@ module fantasticfft_fft8 # (
 );
 
 // implements a butterfly subadder
-task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, output logic [INT_SIZE - 1 : -FRAC_SIZE] c, d);
+task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, ref logic [INT_SIZE - 1 : -FRAC_SIZE] c, d);
     begin
-        logic [INT_SIZE - 1 : -FRAC_SIZE] t0;
-        t0 = a + b;
-        c <= a + b;
-        d <= a - b;
+        c = a + b;
+        d = a - b;
     end
 endtask 
 
 // implements a constant multiplier with 1/sqrt(2) as the constant
-task ConstMultiplier(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, output logic [INT_SIZE - 1 : -FRAC_SIZE] b);
+task ConstMultiplier(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, ref logic [INT_SIZE - 1 : -FRAC_SIZE] b);
     begin
         // Represents 0.707106 (1/sqrt(2))
         logic [INT_SIZE - 1 : -FRAC_SIZE] c0 = `CREATE_CONSTANT_FIXED_POINT(INT_SIZE, FRAC_SIZE, 0, 8'b1011_0101); 
@@ -44,104 +42,10 @@ logic [INT_SIZE - 1 : -FRAC_SIZE] d0, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d
 logic isValid_stage1, isValid_stage2, isValid_stage3;
 
 always_ff @( posedge fft8if.clk ) begin : fft8
-    // -----------------------------------------------------------------//
-    // FFT8 Mathematical definition
-
-    /*y0 = (x0 + x4) + (x2 + x6) + (x1 + x5) + (x3 + x7); 
-    y1 = (x0 - x4) + 0.707 * ((x1 - x5) + (x7 - x3)); 
-    y2 = (x0 + x4) - (x2 + x6);
-    y3 = (x0 - x4) + 0.707 * ((x5 - x1) + (x3 - x7)); 
-    y4 = (x0 + x4) + (x2 + x6) - (x1 + x5) - (x3 + x7); 
-    y5 = (x0 - x4) + 0.707 * ((x5 - x1) + (x3 - x7)); 
-    y6 = (x0 + x4) - (x2 + x6); 
-    y7 = (x0 - x4) + 0.707 * ((x1 - x5) + (x7 - x3)); 
-
-    y0_i = 0;
-    y1_i = (x6 - x2) + 0.707 * ((x7 - x3) - (x1 + x5));
-    y2_i = (x3 + x7) - (x1 + x5); 
-    y3_i = (x2 - x6) + 0.707 * ((x7 - x3) + (x5 - x1)); 
-    y4_i = 0;
-    y5_i = (x6 - x2) + 0.707 * ((x1 - x5) + (x3 - x7)); 
-    y6_i = (x1 + x5) - (x3 + x7);
-    y7_i = (x2 - x6) + 0.707 * ((x1 - x5) + (x3 - x7));
-    */
-
-    // Layer 1 - From x to t
-    SubAdder(fft8if.x0, fft8if.x4, t0, t1);
-    SubAdder(fft8if.x2, fft8if.x6, t2, t3);
-    SubAdder(fft8if.x3, fft8if.x7, t4, t5);
-    SubAdder(fft8if.x1, fft8if.x5, t6, t7);
-    isValid_stage1 <= fft8if.isValid;
-
-    // -----------------------------------------------------------------//
-    // FFT8 Mathematical definition at Layer 2
-
-    /*y0 = (t0 + t2) + (t6 + t4); 
-    y1 = (t1) + 0.707 * ((t6) + (Negate(t5))); 
-    y2 = (t0 - t2);
-    y3 = (t1) + 0.707 * ((Negate(t7)) + (t5)); 
-    y4 = (t0 + t2) - (t6 + t4); 
-    y5 = (t1) + 0.707 * ((Negate(t7)) + (t5)); 
-    y6 = (t0 - t2); 
-    y7 = (t1) + 0.707 * ((t6) + (Negate(t5))); 
-
-    y0_i = 0;
-    y1_i = (Negate(t3)) + 0.707 * ((Negate(t5)) - (t6));
-    y2_i = (t4 - t6); 
-    y3_i = (t3) + 0.707 * ((Negate(t5)) + (Negate(t7))); 
-    y4_i = 0;
-    y5_i = (Negate(t3)) + 0.707 * ((t6) + (t5)); 
-    y6_i = (t6 - t4);
-    y7_i = (t3) + 0.707 * ((t6) + (t5));
-    */
-
-    // Layer 2 - from t to c
-    SubAdder(t6, t5, c0, c1);
-    SubAdder(t6, t4, c2, c3);
-    SubAdder(t0, t2, c4, c5);
-    c6 <= Negate(t3);
-    c7 <= t3;
-    SubAdder(Negate(t7), t5, c8, c9);
-    c10 <= Negate(t5) - t6;
-    c11 <= t1;
-    isValid_stage2 <= isValid_stage1;
-
-    // -----------------------------------------------------------------//
-    // FFT8 Mathematical definition at Layer 3
-
-    /*y0 = (c4) + (c2); 
-    y1 = (c11) + 0.707 * (c1); 
-    y2 = (c5);
-    y3 = (c11) + 0.707 * (c8); 
-    y4 = (c4) - (c2); 
-    y5 = (c11) + 0.707 * (c8); 
-    y6 = (c5); 
-    y7 = (c11) + 0.707 * (c1); 
-
-    y0_i = 0;
-    y1_i = (c6) + 0.707 * (c10);
-    y2_i = (Negate(c3)); 
-    y3_i = (c7) + 0.707 * (c9); 
-    y4_i = 0;
-    y5_i = (c6) + 0.707 * (c0); 
-    y6_i = (c3);
-    y7_i = (c7) + 0.707 * (c0);
-    */
-
-    // Layer 3 - from c to d
-    SubAdder(c4, c2, d0, d1);
-    ConstMultiplier(c1, d2);
-    ConstMultiplier(c8, d3);
-    ConstMultiplier(c10, d4);
-    ConstMultiplier(c9, d5);
-    ConstMultiplier(c0, d6);
-    d7 <= c11;
-    d8 <= c5;
-    d9 <= Negate(c3);
-    d10 <= c6;
-    d11 <= c7;
-    d12 <= c3;
-    isValid_stage3 <= isValid_stage2;
+    // Note: this is implemented in reverse order because the designers of SystemVerilog, in their infinite wisdom, 
+    // decided that tasks with outputs passed by reference are not valid targets of non-blocking assignments. Because
+    // logically it makes sense to break the operations below down by tasks rather than implement behavioral modules
+    // for simple addition and subtraction and constant multiplication, the output layer is provided first.
 
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition at Output Layer
@@ -186,6 +90,106 @@ always_ff @( posedge fft8if.clk ) begin : fft8
     fft8if.resultValid <= isValid_stage3;
 
     // -----------------------------------------------------------------//
+    // FFT8 Mathematical definition at Layer 3
+
+    /*y0 = (c4) + (c2); 
+    y1 = (c11) + 0.707 * (c1); 
+    y2 = (c5);
+    y3 = (c11) + 0.707 * (c8); 
+    y4 = (c4) - (c2); 
+    y5 = (c11) + 0.707 * (c8); 
+    y6 = (c5); 
+    y7 = (c11) + 0.707 * (c1); 
+
+    y0_i = 0;
+    y1_i = (c6) + 0.707 * (c10);
+    y2_i = (Negate(c3)); 
+    y3_i = (c7) + 0.707 * (c9); 
+    y4_i = 0;
+    y5_i = (c6) + 0.707 * (c0); 
+    y6_i = (c3);
+    y7_i = (c7) + 0.707 * (c0);
+    */
+
+    // Layer 3 - from c to d
+    SubAdder(c4, c2, d0, d1);
+    ConstMultiplier(c1, d2);
+    ConstMultiplier(c8, d3);
+    ConstMultiplier(c10, d4);
+    ConstMultiplier(c9, d5);
+    ConstMultiplier(c0, d6);
+    d7 <= c11;
+    d8 <= c5;
+    d9 <= Negate(c3);
+    d10 <= c6;
+    d11 <= c7;
+    d12 <= c3;
+    isValid_stage3 <= isValid_stage2;
+
+    // -----------------------------------------------------------------//
+    // FFT8 Mathematical definition at Layer 2
+
+    /*y0 = (t0 + t2) + (t6 + t4); 
+    y1 = (t1) + 0.707 * ((t6) + (Negate(t5))); 
+    y2 = (t0 - t2);
+    y3 = (t1) + 0.707 * ((Negate(t7)) + (t5)); 
+    y4 = (t0 + t2) - (t6 + t4); 
+    y5 = (t1) + 0.707 * ((Negate(t7)) + (t5)); 
+    y6 = (t0 - t2); 
+    y7 = (t1) + 0.707 * ((t6) + (Negate(t5))); 
+
+    y0_i = 0;
+    y1_i = (Negate(t3)) + 0.707 * ((Negate(t5)) - (t6));
+    y2_i = (t4 - t6); 
+    y3_i = (t3) + 0.707 * ((Negate(t5)) + (Negate(t7))); 
+    y4_i = 0;
+    y5_i = (Negate(t3)) + 0.707 * ((t6) + (t5)); 
+    y6_i = (t6 - t4);
+    y7_i = (t3) + 0.707 * ((t6) + (t5));
+    */
+
+    // Layer 2 - from t to c
+    SubAdder(t6, t5, c0, c1);
+    SubAdder(t6, t4, c2, c3);
+    SubAdder(t0, t2, c4, c5);
+    c6 <= Negate(t3);
+    c7 <= t3;
+    SubAdder(Negate(t7), t5, c8, c9);
+    c10 <= Negate(t5) - t6;
+    c11 <= t1;
+    isValid_stage2 <= isValid_stage1;
+
+    // -----------------------------------------------------------------//
+    // FFT8 Mathematical definition
+
+    /*y0 = (x0 + x4) + (x2 + x6) + (x1 + x5) + (x3 + x7); 
+    y1 = (x0 - x4) + 0.707 * ((x1 - x5) + (x7 - x3)); 
+    y2 = (x0 + x4) - (x2 + x6);
+    y3 = (x0 - x4) + 0.707 * ((x5 - x1) + (x3 - x7)); 
+    y4 = (x0 + x4) + (x2 + x6) - (x1 + x5) - (x3 + x7); 
+    y5 = (x0 - x4) + 0.707 * ((x5 - x1) + (x3 - x7)); 
+    y6 = (x0 + x4) - (x2 + x6); 
+    y7 = (x0 - x4) + 0.707 * ((x1 - x5) + (x7 - x3)); 
+
+    y0_i = 0;
+    y1_i = (x6 - x2) + 0.707 * ((x7 - x3) - (x1 + x5));
+    y2_i = (x3 + x7) - (x1 + x5); 
+    y3_i = (x2 - x6) + 0.707 * ((x7 - x3) + (x5 - x1)); 
+    y4_i = 0;
+    y5_i = (x6 - x2) + 0.707 * ((x1 - x5) + (x3 - x7)); 
+    y6_i = (x1 + x5) - (x3 + x7);
+    y7_i = (x2 - x6) + 0.707 * ((x1 - x5) + (x3 - x7));
+    */
+
+    // Layer 1 - From x to t
+    SubAdder(fft8if.x0, fft8if.x4, t0, t1);
+    SubAdder(fft8if.x2, fft8if.x6, t2, t3);
+    SubAdder(fft8if.x3, fft8if.x7, t4, t5);
+    SubAdder(fft8if.x1, fft8if.x5, t6, t7);
+    isValid_stage1 <= fft8if.isValid;
+
+    // -----------------------------------------------------------------//
+    
 
 end
 
