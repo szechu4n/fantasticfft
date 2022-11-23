@@ -18,8 +18,8 @@ module fantastic_fft8_tb (
         $display("Testing macros...");
         $display("\tConstant test 1: %b\tConstant test2: %b", thing1, thing2);
 
-        $assert (thing1 == thing2)
-        else $display("\tMacro failed to correctly create fixed point number.");
+        assert (thing1 == thing2) $display("Macro correctly generated fixed point number.");
+        else $fatal("\tMacro failed to correctly create fixed point number.");
 
         $display("-----------------------------------------------------------------");
         $display("Beginning test...");
