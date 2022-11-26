@@ -24,7 +24,9 @@ task ConstMultiplier(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, ref logic [INT_S
     begin
         // Represents 0.707106 (1/sqrt(2))
         logic [INT_SIZE - 1 : -FRAC_SIZE] c0 = `CREATE_CONSTANT_FIXED_POINT(INT_SIZE, FRAC_SIZE, 0, 8'b1011_0101); 
-        b = c0 * a;
+        logic [INT_SIZE - 1 : -FRAC_SIZE] d;
+        d = c0 * a;
+        b = d[INT_SIZE - 1 : -FRAC_SIZE];
     end
 endtask
 
@@ -71,20 +73,20 @@ always_ff @( posedge fft8if.clk ) begin : fft8
 
     // Output Layer - from d to y
     fft8if.y0 <= (d0); 
-    fft8if.y1 <= (d7) + d2; 
+    fft8if.y1 <= (d7) + d2; // this one is wrong
     fft8if.y2 <= (d8);
     fft8if.y3 <= (d7) + d3; 
     fft8if.y4 <= (d1); 
     fft8if.y5 <= (d7) + d3; 
     fft8if.y6 <= (d8); 
-    fft8if.y7 <= (d7) + d2; 
+    fft8if.y7 <= (d7) + d2; // this one is wrong
 
     fft8if.y0_i <= 0;
-    fft8if.y1_i <= (d10) + d4;
+    fft8if.y1_i <= (d10) + d4; // this one is wrong
     fft8if.y2_i <= (d9); 
     fft8if.y3_i <= (d11) + d5; 
     fft8if.y4_i <= 0;
-    fft8if.y5_i <= (d10) + d6; 
+    fft8if.y5_i <= (d10) + d6;
     fft8if.y6_i <= (d12);
     fft8if.y7_i <= (d11) + d6;
     fft8if.resultValid <= isValid_stage3;
@@ -162,7 +164,8 @@ always_ff @( posedge fft8if.clk ) begin : fft8
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition
 
-    /*y0 = (x0 + x4) + (x2 + x6) + (x1 + x5) + (x3 + x7); 
+    /*
+    y0 = (x0 + x4) + (x2 + x6) + (x1 + x5) + (x3 + x7); 
     y1 = (x0 - x4) + 0.707 * ((x1 - x5) + (x7 - x3)); 
     y2 = (x0 + x4) - (x2 + x6);
     y3 = (x0 - x4) + 0.707 * ((x5 - x1) + (x3 - x7)); 
