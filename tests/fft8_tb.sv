@@ -93,28 +93,28 @@ module fantastic_fft8_tb (
 
         
         $display("\ty0 + y0_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y0), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y0_i));
         $display("\ty1 + y1_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y1), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y1_i));
         $display("\ty2 + y2_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y2), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y2_i));
         $display("\ty3 + y3_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y3), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y3_i));
         $display("\ty4 + y4_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y4), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y4_i));
         $display("\ty5 + y5_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y5), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y5_i));
         $display("\ty6 + y6_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y6), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y6_i));
         $display("\ty7 + y7_i\tExpected: %lf + j * %lf\tCalculated: %lf + j * %lf", 
-            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7_i),
+            `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7_i),
             `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y7), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y7_i));
 
         $finish();
