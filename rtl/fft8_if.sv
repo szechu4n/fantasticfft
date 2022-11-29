@@ -13,10 +13,11 @@ interface fantasticfft_fft8_if #(
         y0_i, y1_i, y2_i, y3_i, y4_i, y5_i, y6_i, y7_i;
 
     modport fft8_device (
-        input clk, isValid, resultValid,
+        input clk, isValid,
             x0, x1, x2, x3, x4, x5, x6, x7,
         output y0, y1, y2, y3, y4, y5, y6, y7,
-            y0_i, y1_i, y2_i, y3_i, y4_i, y5_i, y6_i, y7_i
+            y0_i, y1_i, y2_i, y3_i, y4_i, y5_i, y6_i, y7_i, 
+            resultValid
     );
     // input  logic clk,
     // input  logic isValid,

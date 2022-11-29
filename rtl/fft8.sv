@@ -19,13 +19,6 @@ task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, ref logic [INT_SIZE 
     end
 endtask 
 
-task SubSubber(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, ref logic [INT_SIZE - 1 : -FRAC_SIZE] c, d);
-    begin
-        c = a - b;
-        d = b - a;
-    end
-endtask 
-
 // implements a constant multiplier with 1/sqrt(2) as the constant
 task ConstMultiplier(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, ref logic [INT_SIZE - 1 : -FRAC_SIZE] b);
     begin
@@ -207,7 +200,7 @@ always_ff @( posedge fft8if.clk ) begin : fft8
     SubAdder(fft8if.x2, fft8if.x6, t2, t3);
     SubAdder(fft8if.x3, fft8if.x7, t4, t5);
     SubAdder(fft8if.x1, fft8if.x5, t6, t7);
-    
+
     isValid_stage1 = fft8if.isValid;
 
     // -----------------------------------------------------------------//
