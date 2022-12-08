@@ -59,8 +59,10 @@ always_ff @(clk) begin : control
         for (j = 0; j < 8; j = j + 1) begin
             starts[j]  = 0;
             steps[j]   = 0;
-            realfft[j] = 0;
-            imagfft[j] = 0;
+            for (k = 0; k < 8; k = k + 1) begin
+                realfft[j][k] = 0;
+                imagfft[j][k] = 0;
+            end
         end
         done <= 1'b0;
     end else begin
