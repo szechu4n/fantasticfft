@@ -57,14 +57,14 @@ initial begin
         timeout = timeout + 1;
         @(posedge dft64if.clk);
         #1step;
-        $fdisplay(fd, "%d,%d", timeout, dft64if.done);
+        $fwrite(fd, "%d,%d", timeout, dft64if.done);
         for (n = 0; n < 64; n = n + 1) begin
             for (nn = 0; nn < 64; nn = nn + 1) begin
-                $fdisplay(fd, "%d,", dft64if.realfft[nn][n]);
-                $fdisplay(fd, "%d,", dft64if.imagfft[nn][n]);
+                $fwrite(fd, "%d,", dft64if.realfft[nn][n]);
+                $fwrite(fd, "%d,", dft64if.imagfft[nn][n]);
             end
         end
-        $fdisplay(fd, "\n");
+        $fwrite(fd, "\n");
     end
 
     if (timeout >= 6) begin
