@@ -22,7 +22,7 @@ logic [5 : 0]  steps  [0 : 7];
 logic fft8_valid;
 logic resultValid [0 : 7];
 
-fft8 fft8_(
+fantasticfft_fft8 fft8_(
     .clk         (clk),
     .isValid     (rel),
     .resultValid (fft8_valid),
