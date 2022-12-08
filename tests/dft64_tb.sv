@@ -52,7 +52,7 @@ initial begin
 
     while (dft64if.done !== 1'b1 && timeout < 6) begin
         timeout = timeout + 1;
-        @(posedge fft8if.clk);
+        @(posedge dft64if.clk);
         #1step;
     end
 
