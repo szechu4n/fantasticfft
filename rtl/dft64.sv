@@ -68,7 +68,7 @@ always_ff @( posedge clk ) begin : control
     end else begin
         done <= 1'b0;
 
-        if (rel) begin
+        if (fft8_valid) begin
             counter = counter + 1;
             if (counter < 8) begin
                 for (j = 0; j < 8; j = j + 1) begin
