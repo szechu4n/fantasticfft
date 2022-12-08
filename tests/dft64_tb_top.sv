@@ -10,6 +10,7 @@ module dft64_tb_top;
         .clk       (dft64if.clk),
         .sreset    (dft64if.sreset),
         .calculate (dft64if.calculate),
+        .rel       (dft64if.rel),
         .done      (dft64if.done),
         .samples   (dft64if.samples),
         .realfft   (dft64if.realfft),
