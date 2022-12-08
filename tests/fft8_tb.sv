@@ -87,7 +87,7 @@ module fantastic_fft8_tb (
         fft8if.x[7] <= 0;
         fft8if.isValid <= 0;
 
-        while (!fft8if.resultValid && timeout < 10) begin
+        while (fft8if.resultValid !== 1'b1 && timeout < 10) begin
             timeout = timeout + 1;
             @(posedge fft8if.clk);
             #1step;
