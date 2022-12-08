@@ -53,7 +53,7 @@ task ComplexMultiply(input logic signed [15 : 0] a, ai, b, bi,
     end
 endtask
 
-always_ff @( clk ) begin : cm
+always_ff @( posedge clk ) begin : cm
     if (isValid === 1'b1) begin
         BlockComplexMultiply(x, xi, c, ci, y, yi);
     end

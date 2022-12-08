@@ -53,7 +53,7 @@ logic [3:0] k;
 logic [3:0] l;
 logic [3:0] counter;
 
-always_ff @(clk) begin : control
+always_ff @( posedge clk ) begin : control
     if (sreset === 1'b1) begin
         counter = 0;
         for (j = 0; j < 8; j = j + 1) begin
@@ -81,6 +81,7 @@ always_ff @(clk) begin : control
                     steps[j]  = 0;
                 end
                 done <= 1'b1;
+                counter = 0;
             end
         end
 
