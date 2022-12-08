@@ -73,8 +73,7 @@ initial begin
     end else begin
         $display("\tDesign produced a result in %d cycles.", timeout + (n / 8));        
     end
-    
-
+    $fclose(fd);
     $finish();
 end
 endmodule
