@@ -52,20 +52,19 @@ initial begin
     end
     $display("\tAll samples clocked in.");
 
-    fd= $fopen("results.csv", "w");
+    fd= $fopen("results.csv", "a+");
     while (dft64if.done !== 1'b1 && timeout < 6) begin
         timeout = timeout + 1;
         @(posedge dft64if.clk);
         #1step;
-        $fwrite(fd, "%d,%d", timeout, dft64if.done);
+        $fdisplay(fd, "%d,%d", timeout, dft64if.done);
         for (n = 0; n < 64; n = n + 1) begin
-
             for (nn = 0; nn < 64; nn = nn + 1) begin
-                $fwrite(fd, "%d,", dft64if.realfft[nn][n]);
-                $fwrite(fd, "%d,", dft64if.imagfft[nn][n]);
+                $fdisplay(fd, "%d,", dft64if.realfft[nn][n]);
+                $fdisplay(fd, "%d,", dft64if.imagfft[nn][n]);
             end
         end
-        $fwrite(fd, "\n");
+        $fdisplay(fd, "\n");
     end
 
     if (timeout >= 6) begin
