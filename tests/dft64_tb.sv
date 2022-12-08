@@ -52,7 +52,7 @@ initial begin
     end
     $display("\tAll samples clocked in.");
 
-    fd= $fopen("results.csv", "a+");
+    fd= $fopen("results.csv", "w");
     while (dft64if.done !== 1'b1 && timeout < 6) begin
         timeout = timeout + 1;
         @(posedge dft64if.clk);
