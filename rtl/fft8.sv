@@ -8,11 +8,16 @@ module fantasticfft_fft8 # (
     // Determines size of fractional component of fixed point
     parameter FRAC_SIZE  = 8
 )(
-    fantasticfft_fft8_if fft8if
+    input  logic clk,
+    input  logic isValid, 
+    output logic resultValid,
+
+    input  logic [INT_SIZE + FRAC_SIZE - 1:0] x [0 : 7],
+    output logic [INT_SIZE + FRAC_SIZE - 1:0] y [0 : 7], yi [0 : 7]
 );
 
 // implements a butterfly subadder
-task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, ref logic [INT_SIZE - 1 : -FRAC_SIZE] c, d);
+task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, output logic [INT_SIZE - 1 : -FRAC_SIZE] c, d);
     begin
         c = a + b;
         d = a - b;
@@ -20,7 +25,7 @@ task SubAdder(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, b, ref logic [INT_SIZE 
 endtask 
 
 // implements a constant multiplier with 1/sqrt(2) as the constant
-task ConstMultiplier(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, ref logic [INT_SIZE - 1 : -FRAC_SIZE] b);
+task ConstMultiplier(input logic [INT_SIZE - 1 : -FRAC_SIZE] a, output logic [INT_SIZE - 1 : -FRAC_SIZE] b);
     begin
         // Represents 0.707106 (1/sqrt(2))
         logic [INT_SIZE - 1 : -FRAC_SIZE] c0 = `CREATE_CONSTANT_FIXED_POINT(INT_SIZE, FRAC_SIZE, 0, 8'b1011_0101); 
@@ -56,7 +61,7 @@ logic [INT_SIZE - 1 : -FRAC_SIZE] c0, c1, c2, c3, c4, c5, c6, c7;
 logic [INT_SIZE - 1 : -FRAC_SIZE] d0, d1, d2, d3, d4, d5, d6, d7;
 logic isValid_stage1, isValid_stage2, isValid_stage3;
 
-always_ff @( posedge fft8if.clk ) begin : fft8
+always_ff @( posedge clk ) begin : fft8
     // Note: this is implemented in reverse order because the designers of SystemVerilog, in their infinite wisdom, 
     // decided that tasks with outputs passed by reference are not valid targets of non-blocking assignments. Because
     // logically it makes sense to break the operations below down by tasks rather than implement behavioral modules
@@ -85,25 +90,25 @@ always_ff @( posedge fft8if.clk ) begin : fft8
     y7_i = (d5) + d3;
     */
 
-    fft8if.y0 = d0; 
-    fft8if.y1 = d4 + -d2; 
-    fft8if.y2 = d6;
-    fft8if.y3 = d4 + d2; 
-    fft8if.y4 = d1; 
-    fft8if.y5 = d4 + d2; 
-    fft8if.y6 = d6; 
-    fft8if.y7 = d4 + -d2; 
+    y[0] = d0; 
+    y[1] = d4 + -d2; 
+    y[2] = d6;
+    y[3] = d4 + d2; 
+    y[4] = d1; 
+    y[5] = d4 + d2; 
+    y[6] = d6; 
+    y[7] = d4 + -d2; 
 
-    fft8if.y0_i =  0;
-    fft8if.y1_i = -d5 + -d3;
-    fft8if.y2_i =  d7; 
-    fft8if.y3_i =  d5 + -d3; 
-    fft8if.y4_i =  0;
-    fft8if.y5_i = -d5 + d3; 
-    fft8if.y6_i = -d7;
-    fft8if.y7_i =  d5 + d3;
+    yi[0] =  0;
+    yi[1] = -d5 + -d3;
+    yi[2] =  d7; 
+    yi[3] =  d5 + -d3; 
+    yi[4] =  0;
+    yi[5] = -d5 + d3; 
+    yi[6] = -d7;
+    yi[7] =  d5 + d3;
 
-    fft8if.resultValid = isValid_stage3;
+    resultValid = isValid_stage3;
 
     // -----------------------------------------------------------------//
     // FFT8 Mathematical definition at Output Layer
@@ -196,12 +201,12 @@ always_ff @( posedge fft8if.clk ) begin : fft8
     */
 
     // Layer 1 - From x to t
-    SubAdder(fft8if.x0, fft8if.x4, t0, t1);
-    SubAdder(fft8if.x2, fft8if.x6, t2, t3);
-    SubAdder(fft8if.x3, fft8if.x7, t4, t5);
-    SubAdder(fft8if.x1, fft8if.x5, t6, t7);
+    SubAdder(x[0], x[4], t0, t1);
+    SubAdder(x[2], x[6], t2, t3);
+    SubAdder(x[3], x[7], t4, t5);
+    SubAdder(x[1], x[5], t6, t7);
 
-    isValid_stage1 = fft8if.isValid;
+    isValid_stage1 = isValid;
 
     // -----------------------------------------------------------------//
     

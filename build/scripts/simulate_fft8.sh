@@ -1,6 +1,7 @@
 # run from within top level directory (fantasticfft)
 
 if [ ! -d "build/f_sim" ]; then
+    echo "Creating f_sim directory..."
     mkdir build/f_sim
 fi
 

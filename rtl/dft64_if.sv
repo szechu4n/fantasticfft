@@ -1,12 +1,11 @@
-interface fantasticfft_fft8_if #(
+interface dft64_if #(
     // Determines size of integer component of fixed point
     parameter INT_SIZE   = 8,
 
     // Determines size of fractional component of fixed point
     parameter FRAC_SIZE  = 8
 ) (input logic clk);
-    logic isValid, resultValid;
-
-    logic [INT_SIZE + FRAC_SIZE - 1:0] x [0 : 7], y [0 : 7], yi [0 : 7];
-    
+    logic sreset, calculate, rel, done;
+    logic [15 : 0] samples [0 : 7];
+    logic [15 : 0] realfft [0 : 7][0 : 7], imagfft [0 : 7][0 : 7];    
 endinterface

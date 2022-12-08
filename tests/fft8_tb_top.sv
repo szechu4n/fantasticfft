@@ -6,7 +6,13 @@ module fantastic_fft8_tb_top;
 
     fantasticfft_fft8_if fft8if(clk);
 
-    fantasticfft_fft8 dut(fft8if.fft8_device);
+    fantasticfft_fft8 dut(
+        .clk     (fft8if.clk),
+        .isValid (fft8if.isValid),
+        .x       (fft8if.x),
+        .y       (fft8if.y),
+        .yi      (fft8if.yi)
+    );
 
     fantastic_fft8_tb t1(fft8if);
 endmodule

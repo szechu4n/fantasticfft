@@ -49,3 +49,4 @@ always @(slave_sel, s_clk, reset)begin
 		send_complete = 0;
 	end
 end
+endmodule

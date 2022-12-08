@@ -61,14 +61,14 @@ module fantastic_fft8_tb (
         y7_i = (x2 - x6) + 0.707 * ((x1 - x5) + (x3 - x7));
         $display("\tConstant expressions for FFT8 evaluated...");
 
-        fft8if.x0 <= x0;
-        fft8if.x1 <= x1;
-        fft8if.x2 <= x2;
-        fft8if.x3 <= x3;
-        fft8if.x4 <= x4;
-        fft8if.x5 <= x5;
-        fft8if.x6 <= x6;
-        fft8if.x7 <= x7;
+        fft8if.x[0] <= x0;
+        fft8if.x[1] <= x1;
+        fft8if.x[2] <= x2;
+        fft8if.x[3] <= x3;
+        fft8if.x[4] <= x4;
+        fft8if.x[5] <= x5;
+        fft8if.x[6] <= x6;
+        fft8if.x[7] <= x7;
         fft8if.isValid <= 1;
         $display("\tAssigned constant values to FFT8 inputs...");
 
@@ -77,17 +77,17 @@ module fantastic_fft8_tb (
 
         $display("\tValues should now be clocked into FFT8, clearing values and awaiting results...");
 
-        fft8if.x0 <= 0;
-        fft8if.x1 <= 0;
-        fft8if.x2 <= 0;
-        fft8if.x3 <= 0;
-        fft8if.x4 <= 0;
-        fft8if.x5 <= 0;
-        fft8if.x6 <= 0;
-        fft8if.x7 <= 0;
+        fft8if.x[0] <= 0;
+        fft8if.x[1] <= 0;
+        fft8if.x[2] <= 0;
+        fft8if.x[3] <= 0;
+        fft8if.x[4] <= 0;
+        fft8if.x[5] <= 0;
+        fft8if.x[6] <= 0;
+        fft8if.x[7] <= 0;
         fft8if.isValid <= 0;
 
-        if (!resultValid && timeout < 10) begin
+        if (!fft8if.resultValid && timeout < 10) begin
             timeout = timeout + 1;
             @(posedge fft8if.clk);
             #1step;
@@ -98,29 +98,29 @@ module fantastic_fft8_tb (
         end else begin
             $display("\tDesign produced a result in %d cycles.", timeout);
             $display("\ty0 + y0_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y0), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y0_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y0_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[0]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[0]));
             $display("\ty1 + y1_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y1), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y1_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y1_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[1]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[1]));
             $display("\ty2 + y2_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y2), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y2_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y2_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[2]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[2]));
             $display("\ty3 + y3_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y3), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y3_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y3_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[3]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[3]));
             $display("\ty4 + y4_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y4), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y4_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y4_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[4]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[4]));
             $display("\ty5 + y5_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y5), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y5_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y5_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[5]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[5]));
             $display("\ty6 + y6_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y6), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y6_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y6_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[6]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[6]));
             $display("\ty7 + y7_i\tExpected: %f + j * %f\t\tCalculated: %f + j * %f", 
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7),        `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7_i),
-                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y7), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y7_i));
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7),          `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, y7_i),
+                `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.y[7]), `GET_FLOAT_REPRESENTATION_FIXED_POINT(8, fft8if.yi[7]));
             
         end
         
