@@ -57,6 +57,7 @@ always_ff @( clk ) begin : cm
     if (isValid === 1'b1) begin
         BlockComplexMultiply(x, xi, c, ci, y, yi);
     end
+    resultValid <= isValid;
 end
 
 endmodule

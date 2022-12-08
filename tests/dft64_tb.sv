@@ -30,7 +30,8 @@ initial begin
     dft64if.sreset = 1'b1;
     @(posedge dft64if.clk);
     #1step;
-    dft64if.sreset = 1'b0;
+    dft64if.sreset    = 1'b0;
+    dft64if.calculate = 1'b1;
     $display("\tReset dft64 module.");
 
     $display("Starting test...");
