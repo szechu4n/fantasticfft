@@ -41,8 +41,8 @@ generate
             .step        (steps[i]),
             .x           (realt),
             .xi          (imagt),
-            .y           (realc[0 : 7][i]),
-            .yi          (imagc[0 : 7][i]),
+            .y           (realc[i]),
+            .yi          (imagc[i]),
             .resultValid (resultValid[i])
         );
     end
