@@ -50,6 +50,7 @@ endgenerate
 
 logic [3:0] j;
 logic [3:0] k;
+logic [3:0] l;
 logic [3:0] counter;
 
 always_ff @(clk) begin : control
@@ -85,8 +86,10 @@ always_ff @(clk) begin : control
             
             for (k = 0; k < 8; k = k + 1) begin
                 if (resultValid[k]) begin
-                    realfft[k] = realfft[k] + realc[k];
-                    imagfft[k] = imagfft[k] + imagc[k];
+                    for (l = 0; l < 8; l = l + 1) begin
+                        realfft[l][k] = realfft[l][k] + realc[l][k];
+                        imagfft[l][k] = imagfft[l][k] + imagc[l][k];
+                    end
                 end
             end
         end
